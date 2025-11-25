@@ -1,162 +1,192 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jay's Tools Hub</title>
-<meta name="description" content="A simple hub for Jay's web tools. Add, search and preview tools." />
+<title>Jay’s Coding Hub</title>
+<meta name="description" content="Jay’s Coding Hub — an organised place for web utilities and small tools." />
 <link rel="icon" href="favicon.ico" />
+<!-- Google font (system fallback included) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Simple, modern hub styles - adjust fonts/spacing as you like */
   :root{
-    --bg:#f6f7f9;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --accent:#0b74de;
-    --radius:10px;
-    --gap:16px;
-    --max-width:1100px;
+    --bg-1: #0f1724;       /* deep base for header accent */
+    --bg-2: #0b1220;       /* gradient end */
+    --panel: #ffffff;
+    --muted: #6b7280;
+    --accent: #0b74de;
+    --accent-2: #6b8cff;
+    --glass: rgba(255,255,255,0.06);
+    --radius: 12px;
+    --gap: 18px;
+    --max-w: 1200px;
+    color-scheme: light;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0;
-    background:linear-gradient(180deg,#f8fafc, #eef2f7);
-    color:#111827;
+    background:
+      radial-gradient(900px 400px at 10% 10%, rgba(11,116,222,0.06), transparent 8%),
+      linear-gradient(180deg,#f7f9fc 0%, #eef3f9 100%);
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
-    padding:24px;
+    padding:28px;
     display:flex;
     justify-content:center;
   }
+
   .wrap{
     width:100%;
-    max-width:var(--max-width);
+    max-width:var(--max-w);
   }
+
   header{
     display:flex;
     align-items:center;
     gap:16px;
     margin-bottom:20px;
   }
-  header h1{margin:0;font-size:1.25rem}
-  .controls{
-    margin-left:auto;
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .btn{
-    border:0;
-    background:var(--accent);
-    colour:#fff;
-    color:#fff;
-    padding:8px 12px;
-    border-radius:8px;
-    font-weight:600;
-    cursor:pointer;
-    box-shadow:0 4px 10px rgba(11,116,222,0.12);
-  }
-  .btn.ghost{
-    background:transparent;
-    color:var(--accent);
-    box-shadow:none;
-    border:1px solid rgba(11,116,222,0.12);
-  }
-  .search{
-    display:flex;
-    gap:8px;
-    margin-bottom:16px;
-    align-items:center;
-  }
-  .search input{
-    flex:1;
-    padding:10px 12px;
-    border-radius:10px;
-    border:1px solid #e6e9ee;
-    background:var(--card);
-    font-size:0.95rem;
-  }
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-    gap:var(--gap);
-  }
-  .card{
-    background:var(--card);
-    padding:14px;
-    border-radius:var(--radius);
-    box-shadow:0 1px 2px rgba(16,24,40,0.04);
+
+  .brand{
     display:flex;
     gap:12px;
     align-items:center;
   }
-  .favicon{
-    width:48px;
-    height:48px;
-    border-radius:8px;
-    flex:0 0 48px;
+  .logo {
+    width:52px;height:52px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 6px 18px rgba(11,116,222,0.18);
+    color:white;font-weight:700;font-size:1.1rem;
+  }
+  h1{
+    margin:0;font-size:1.25rem;color:#0f1724;
+    letter-spacing: -0.01em;
+  }
+  .subtitle{margin:2px 0 0;color:var(--muted);font-size:0.92rem}
+
+  .controls{
+    margin-left:auto;
     display:flex;
+    gap:10px;
     align-items:center;
-    justify-content:center;
-    background:#f3f4f6;
-    font-weight:700;
-    font-size:0.9rem;
-    color:#374151;
-    overflow:hidden;
   }
+
+  .btn {
+    border:0;padding:9px 12px;border-radius:10px;font-weight:600;cursor:pointer;
+    background:linear-gradient(180deg,#0b74de,#0a5fc5);color:white;box-shadow:0 6px 14px rgba(11,116,222,0.14);
+  }
+  .btn.ghost{
+    background:transparent;color:var(--accent);border:1px solid rgba(11,116,222,0.12);box-shadow:none;font-weight:600;
+  }
+  .btn.small{padding:8px 10px;font-size:0.95rem;border-radius:9px}
+  .icon-btn{display:inline-flex;align-items:center;gap:8px}
+
+  .search-row{
+    display:flex;gap:12px;align-items:center;margin-bottom:16px;
+  }
+  .search{
+    flex:1;display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--panel);
+    box-shadow:0 4px 18px rgba(12,15,30,0.04);border:1px solid #eef2f7;
+  }
+  .search input{
+    border:0;outline:none;font-size:0.98rem;background:transparent;width:100%;
+  }
+  select.category{
+    min-width:180px;padding:10px;border-radius:10px;border:1px solid #e6e9ee;background:var(--panel);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap:var(--gap);
+  }
+
+  .card{
+    position:relative;
+    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,252,255,0.95));
+    border-radius:var(--radius);
+    padding:14px;
+    box-shadow: 0 6px 20px rgba(9,10,25,0.04);
+    display:flex;gap:12px;align-items:center;transition:transform .18s ease, box-shadow .18s ease;
+    border:1px solid rgba(14,20,30,0.03);
+  }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 12px 34px rgba(9,10,25,0.08); }
+
+  .fav{
+    width:64px;height:64px;border-radius:10px;flex:0 0 64px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(11,116,222,0.06), rgba(107,140,255,0.03));
+    overflow:hidden;border:1px solid rgba(11,116,222,0.06);
+  }
+  .fav img{width:100%;height:100%;object-fit:cover}
+
   .meta{flex:1;min-width:0}
-  .meta h3{margin:0;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .meta p{margin:4px 0 0;font-size:0.9rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .meta h3{margin:0;font-size:1.01rem;line-height:1.15;color:#081028;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta p{margin:6px 0 0;font-size:0.92rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta .chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .chip{font-size:0.78rem;padding:6px 8px;border-radius:999px;background:#f1f5f9;color:#253244;}
+  .category-pill{font-size:0.78rem;padding:6px 8px;border-radius:999px;background:linear-gradient(90deg, rgba(107,140,255,0.12), rgba(11,116,222,0.06));color:#15304a}
+
   .actions{display:flex;gap:8px;align-items:center}
-  .actions button{padding:6px 8px;border-radius:8px;border:1px solid #e6e9ee;background:transparent;cursor:pointer}
-  .tag{display:inline-block;padding:6px 8px;border-radius:999px;background:#f1f5f9;font-size:0.8rem;color:#334155;margin-top:8px}
-  footer{margin-top:20px;color:var(--muted);font-size:0.9rem;text-align:center}
-  /* Modal */
-  .modal-backdrop{
-    position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.5);z-index:60;padding:20px;
+  .action{
+    background:transparent;border:0;padding:8px 10px;border-radius:9px;cursor:pointer;font-weight:600;color:#0b74de;
+    transition:background .12s ease, transform .08s ease;
   }
+  .action:hover{ background:rgba(11,116,222,0.04); transform:translateY(-1px) }
+
+  footer{margin-top:22px;color:var(--muted);font-size:0.92rem;text-align:center}
+
+  /* Modal */
+  .modal-backdrop{ position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.55);z-index:60;padding:20px; }
   .modal{
-    width:100%;max-width:1000px;background:var(--card);border-radius:10px;padding:12px;height:80vh;display:flex;flex-direction:column;
+    width:100%;max-width:1100px;background:var(--panel);border-radius:12px;padding:12px;height:82vh;display:flex;flex-direction:column;box-shadow:0 30px 70px rgba(8,18,32,0.5);
   }
   .modal .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:8px}
-  .modal iframe{border:0;flex:1;border-radius:8px;background:#fff}
-  /* Form */
-  .form-row{display:flex;gap:8px;margin-bottom:8px}
+  .modal iframe{border:0;flex:1;border-radius:10px;background:#fff}
+
+  /* Form modal smaller */
+  .form-modal .modal{max-width:760px;height:auto;padding:14px}
+  .form-row{display:flex;gap:8px;margin-bottom:10px}
   .form-row input, .form-row select, .form-row textarea{
-    padding:8px;border-radius:8px;border:1px solid #e6e9ee;font-size:0.95rem;flex:1;background:#fff;
+    padding:10px;border-radius:10px;border:1px solid #eef2f7;font-size:0.95rem;flex:1;background:#fff;
   }
-  .small{font-size:0.9rem;color:var(--muted)}
-  .inline{display:inline-flex;gap:8px;align-items:center}
-  @media (max-width:560px){
-    header{flex-direction:column;align-items:flex-start;gap:8px}
+  .small{font-size:0.88rem;color:var(--muted)}
+
+  @media (max-width:640px){
+    header{flex-direction:column;align-items:flex-start}
     .controls{margin-left:0;width:100%}
-    .search{flex-direction:column;align-items:stretch}
-    .form-row{flex-direction:column}
+    .search-row{flex-direction:column;align-items:stretch}
+    .card{padding:12px}
+    .fav{width:56px;height:56px;flex:0 0 56px}
   }
 </style>
 </head>
 <body>
-  <div class="wrap" role="main">
+  <div class="wrap" role="main" aria-label="Jay's Coding Hub">
     <header>
-      <div>
-        <h1>Tools Hub</h1>
-        <div class="small">Central place for your web utilities — add, search and preview.</div>
+      <div class="brand" aria-hidden="false">
+        <div class="logo" aria-hidden="true">JC</div>
+        <div>
+          <h1>Jay’s Coding Hub</h1>
+          <div class="subtitle">A neat place for your tools — add, preview and organise.</div>
+        </div>
       </div>
 
       <div class="controls" aria-hidden="false">
-        <div style="display:flex;gap:8px;align-items:center">
-          <button id="exportBtn" class="btn ghost" title="Export tools JSON">Export JSON</button>
-          <button id="importBtn" class="btn ghost" title="Import tools JSON">Import JSON</button>
-        </div>
-        <button id="addBtn" class="btn" title="Add a new tool">+ Add tool</button>
+        <button id="exportBtn" class="btn small ghost">Export JSON</button>
+        <button id="importBtn" class="btn small ghost">Import JSON</button>
+        <button id="addBtn" class="btn small">+ Add tool</button>
       </div>
     </header>
 
-    <div class="search" aria-hidden="false">
-      <input id="q" placeholder="Search tools by name, description or tag…" aria-label="Search tools" />
-      <select id="categoryFilter" style="width:160px;padding:10px;border-radius:10px;border:1px solid #e6e9ee;background:var(--card)">
+    <div class="search-row" role="region" aria-label="Search and filter tools">
+      <div class="search" role="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="#9aa6bb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="#9aa6bb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input id="q" placeholder="Search tools by name, description or tag…" aria-label="Search tools" />
+      </div>
+      <select id="categoryFilter" class="category" aria-label="Filter by category">
         <option value="">All categories</option>
       </select>
     </div>
@@ -164,11 +194,11 @@
     <div id="grid" class="grid" aria-live="polite"></div>
 
     <footer>
-      <div>Tip: keep a `tools.json` in the repo for a canonical list and use Import to load it locally.</div>
+      Tip: keep a `tools.json` in the repo for a canonical list and use Import to load it locally.
     </footer>
   </div>
 
-  <!-- Modal preview -->
+  <!-- Preview modal -->
   <div id="modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document">
       <div class="modal-head">
@@ -177,22 +207,22 @@
           <div id="modalUrl" class="small" style="color:var(--muted)"></div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <button id="openNewTab" class="btn ghost">Open in new tab</button>
-          <button id="closeModal" class="btn">Close</button>
+          <button id="openNewTab" class="btn small ghost">Open in new tab</button>
+          <button id="closeModal" class="btn small">Close</button>
         </div>
       </div>
-      <iframe id="previewFrame" src=""></iframe>
+      <iframe id="previewFrame" src="" title="Tool preview"></iframe>
     </div>
   </div>
 
-  <!-- Add / Edit form (hidden) -->
-  <div id="formModal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal" role="document" style="max-width:720px;height:auto;">
+  <!-- Add / Edit form modal -->
+  <div id="formModal" class="modal-backdrop form-modal" aria-hidden="true">
+    <div class="modal" role="document" style="max-width:760px;height:auto;">
       <div class="modal-head">
         <div><strong id="formTitle">Add new tool</strong></div>
         <div style="display:flex;gap:8px">
-          <button id="saveTool" class="btn">Save</button>
-          <button id="cancelTool" class="btn ghost">Cancel</button>
+          <button id="saveTool" class="btn small">Save</button>
+          <button id="cancelTool" class="btn small ghost">Cancel</button>
         </div>
       </div>
       <div style="padding:8px 0;">
@@ -208,27 +238,22 @@
         </div>
         <div class="form-row">
           <input id="toolCategory" placeholder="Category (optional)" />
-          <input id="toolFavicon" placeholder="Favicon URL (optional) — leave blank to auto-fetch / default" />
+          <input id="toolFavicon" placeholder="Favicon URL (optional) — leave blank to auto-fetch" />
         </div>
         <div class="form-row">
           <textarea id="toolNotes" placeholder="Notes (optional)" rows="3"></textarea>
         </div>
         <div class="small" style="margin-top:6px;color:var(--muted)">
-          The hub stores entries in your browser by default. Use Export/Import to maintain a repo-level `tools.json`.
+          Entries are stored locally by default. Use Export/Import to maintain a repo-level `tools.json`.
         </div>
       </div>
     </div>
   </div>
 
 <script>
-/*
-  Tools Hub script
-  - Stores tools in localStorage under key: "tools_hub_v1"
-  - Supports import/export JSON
-  - Preview modal with iframe (sandbox not enforced here; if you need sandboxing, add iframe sandbox attributes)
-*/
+/* ---------- Data + initial tools ---------- */
+function cryptoRandomId(){ return 'id-' + Math.random().toString(36).slice(2,9); }
 
-/* --- Sample initial tools --- */
 const DEFAULT_TOOLS = [
   {
     id: cryptoRandomId(),
@@ -262,14 +287,9 @@ const DEFAULT_TOOLS = [
   }
 ];
 
-/* helpers */
-function cryptoRandomId(){
-  return 'id-' + Math.random().toString(36).slice(2,9);
-}
+const STORAGE_KEY = 'jay_tools_hub_v2';
 
-const STORAGE_KEY = 'tools_hub_v1';
-
-/* DOM */
+/* ---------- DOM refs ---------- */
 const grid = document.getElementById('grid');
 const q = document.getElementById('q');
 const categoryFilter = document.getElementById('categoryFilter');
@@ -299,7 +319,7 @@ const importBtn = document.getElementById('importBtn');
 let tools = loadTools();
 let editId = null;
 
-/* --- Boot --- */
+/* ---------- Boot ---------- */
 render();
 populateCategoryFilter();
 q.addEventListener('input', render);
@@ -352,7 +372,6 @@ exportBtn.addEventListener('click', () => {
 });
 
 importBtn.addEventListener('click', async () => {
-  // Simple file input import
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json,application/json';
@@ -363,7 +382,6 @@ importBtn.addEventListener('click', async () => {
       const txt = await file.text();
       const parsed = JSON.parse(txt);
       if (!Array.isArray(parsed)) throw new Error('Invalid format: expected an array');
-      // Basic validation
       const valid = parsed.every(p => p && p.name && p.url);
       if (!valid) throw new Error('Missing required fields for some tools.');
       if (!confirm('Import will replace your local hub entries. Continue?')) return;
@@ -379,7 +397,7 @@ importBtn.addEventListener('click', async () => {
   input.click();
 });
 
-/* --- Functions --- */
+/* ---------- Functions ---------- */
 function loadTools(){
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -406,7 +424,7 @@ function render(){
   if (!filtered.length){
     const empty = document.createElement('div');
     empty.style.gridColumn = '1/-1';
-    empty.style.padding = '28px';
+    empty.style.padding = '38px';
     empty.style.textAlign = 'center';
     empty.style.color = 'var(--muted)';
     empty.textContent = 'No tools found — try adding one or import a `tools.json`.';
@@ -419,17 +437,16 @@ function render(){
     card.tabIndex = 0;
 
     const fav = document.createElement('div');
-    fav.className = 'favicon';
-    // Try to show favicon via image; fallback to initials
+    fav.className = 'fav';
     const img = document.createElement('img');
-    img.style.width='100%';
-    img.style.height='100%';
-    img.style.objectFit='cover';
     img.alt = '';
     img.loading = 'lazy';
     img.onerror = () => {
-      fav.removeChild(img);
+      if (fav.contains(img)) fav.removeChild(img);
       fav.textContent = initials(t.name);
+      fav.style.fontWeight = 700;
+      fav.style.color = '#0b74de';
+      fav.style.background = 'linear-gradient(180deg, rgba(11,116,222,0.04), rgba(107,140,255,0.02))';
     };
     img.src = t.favicon || guessFavicon(t.url);
     fav.appendChild(img);
@@ -443,25 +460,47 @@ function render(){
     meta.appendChild(title);
     meta.appendChild(desc);
 
+    const chips = document.createElement('div');
+    chips.className = 'chips';
+    if (t.tags && t.tags.length) {
+      t.tags.slice(0,3).forEach(tag => {
+        const c = document.createElement('span');
+        c.className = 'chip';
+        c.textContent = tag;
+        chips.appendChild(c);
+      });
+    }
+    if (t.category) {
+      const cat = document.createElement('span');
+      cat.className = 'category-pill';
+      cat.textContent = t.category;
+      chips.appendChild(cat);
+    }
+    meta.appendChild(chips);
+
     const actions = document.createElement('div');
     actions.className = 'actions';
     const preview = document.createElement('button');
+    preview.className = 'action';
     preview.title = 'Preview';
     preview.ariaLabel = 'Preview ' + t.name;
     preview.innerHTML = 'Preview';
     preview.onclick = () => openPreview(t);
 
     const open = document.createElement('button');
+    open.className = 'action';
     open.title = 'Open in new tab';
     open.innerHTML = 'Open';
     open.onclick = () => window.open(t.url, '_blank', 'noopener');
 
     const edit = document.createElement('button');
+    edit.className = 'action';
     edit.title = 'Edit entry';
     edit.innerHTML = 'Edit';
     edit.onclick = () => openEditForm(t);
 
     const del = document.createElement('button');
+    del.className = 'action';
     del.title = 'Remove from hub';
     del.innerHTML = 'Delete';
     del.onclick = () => {
@@ -480,14 +519,6 @@ function render(){
     card.appendChild(fav);
     card.appendChild(meta);
     card.appendChild(actions);
-
-    // Tag line
-    if (t.tags && t.tags.length) {
-      const tag = document.createElement('div');
-      tag.className = 'tag';
-      tag.textContent = t.tags.slice(0,3).join(', ');
-      meta.appendChild(tag);
-    }
 
     grid.appendChild(card);
   });
