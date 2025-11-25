@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jay's Tools Hub</title>
+<meta name="description" content="A simple hub for Jay's web tools. Add, search and preview tools." />
+<link rel="icon" href="favicon.ico" />
+<style>
+  /* Simple, modern hub styles - adjust fonts/spacing as you like */
+  :root{
+    --bg:#f6f7f9;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --accent:#0b74de;
+    --radius:10px;
+    --gap:16px;
+    --max-width:1100px;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,#f8fafc, #eef2f7);
+    color:#111827;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:24px;
+    display:flex;
+    justify-content:center;
+  }
+  .wrap{
+    width:100%;
+    max-width:var(--max-width);
+  }
+  header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:20px;
+  }
+  header h1{margin:0;font-size:1.25rem}
+  .controls{
+    margin-left:auto;
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .btn{
+    border:0;
+    background:var(--accent);
+    colour:#fff;
+    color:#fff;
+    padding:8px 12px;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(11,116,222,0.12);
+  }
+  .btn.ghost{
+    background:transparent;
+    color:var(--accent);
+    box-shadow:none;
+    border:1px solid rgba(11,116,222,0.12);
+  }
+  .search{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+    align-items:center;
+  }
+  .search input{
+    flex:1;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid #e6e9ee;
+    background:var(--card);
+    font-size:0.95rem;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:var(--gap);
+  }
+  .card{
+    background:var(--card);
+    padding:14px;
+    border-radius:var(--radius);
+    box-shadow:0 1px 2px rgba(16,24,40,0.04);
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .favicon{
+    width:48px;
+    height:48px;
+    border-radius:8px;
+    flex:0 0 48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f3f4f6;
+    font-weight:700;
+    font-size:0.9rem;
+    color:#374151;
+    overflow:hidden;
+  }
+  .meta{flex:1;min-width:0}
+  .meta h3{margin:0;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta p{margin:4px 0 0;font-size:0.9rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .actions{display:flex;gap:8px;align-items:center}
+  .actions button{padding:6px 8px;border-radius:8px;border:1px solid #e6e9ee;background:transparent;cursor:pointer}
+  .tag{display:inline-block;padding:6px 8px;border-radius:999px;background:#f1f5f9;font-size:0.8rem;color:#334155;margin-top:8px}
+  footer{margin-top:20px;color:var(--muted);font-size:0.9rem;text-align:center}
+  /* Modal */
+  .modal-backdrop{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.5);z-index:60;padding:20px;
+  }
+  .modal{
+    width:100%;max-width:1000px;background:var(--card);border-radius:10px;padding:12px;height:80vh;display:flex;flex-direction:column;
+  }
+  .modal .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:8px}
+  .modal iframe{border:0;flex:1;border-radius:8px;background:#fff}
+  /* Form */
+  .form-row{display:flex;gap:8px;margin-bottom:8px}
+  .form-row input, .form-row select, .form-row textarea{
+    padding:8px;border-radius:8px;border:1px solid #e6e9ee;font-size:0.95rem;flex:1;background:#fff;
+  }
+  .small{font-size:0.9rem;color:var(--muted)}
+  .inline{display:inline-flex;gap:8px;align-items:center}
+  @media (max-width:560px){
+    header{flex-direction:column;align-items:flex-start;gap:8px}
+    .controls{margin-left:0;width:100%}
+    .search{flex-direction:column;align-items:stretch}
+    .form-row{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <header>
+      <div>
+        <h1>Tools Hub</h1>
+        <div class="small">Central place for your web utilities — add, search and preview.</div>
+      </div>
+
+      <div class="controls" aria-hidden="false">
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="exportBtn" class="btn ghost" title="Export tools JSON">Export JSON</button>
+          <button id="importBtn" class="btn ghost" title="Import tools JSON">Import JSON</button>
+        </div>
+        <button id="addBtn" class="btn" title="Add a new tool">+ Add tool</button>
+      </div>
+    </header>
+
+    <div class="search" aria-hidden="false">
+      <input id="q" placeholder="Search tools by name, description or tag…" aria-label="Search tools" />
+      <select id="categoryFilter" style="width:160px;padding:10px;border-radius:10px;border:1px solid #e6e9ee;background:var(--card)">
+        <option value="">All categories</option>
+      </select>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <footer>
+      <div>Tip: keep a `tools.json` in the repo for a canonical list and use Import to load it locally.</div>
+    </footer>
+  </div>
+
+  <!-- Modal preview -->
+  <div id="modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <div class="modal-head">
+        <div>
+          <strong id="modalTitle">Preview</strong>
+          <div id="modalUrl" class="small" style="color:var(--muted)"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="openNewTab" class="btn ghost">Open in new tab</button>
+          <button id="closeModal" class="btn">Close</button>
+        </div>
+      </div>
+      <iframe id="previewFrame" src=""></iframe>
+    </div>
+  </div>
+
+  <!-- Add / Edit form (hidden) -->
+  <div id="formModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="document" style="max-width:720px;height:auto;">
+      <div class="modal-head">
+        <div><strong id="formTitle">Add new tool</strong></div>
+        <div style="display:flex;gap:8px">
+          <button id="saveTool" class="btn">Save</button>
+          <button id="cancelTool" class="btn ghost">Cancel</button>
+        </div>
+      </div>
+      <div style="padding:8px 0;">
+        <div class="form-row">
+          <input id="toolName" placeholder="Tool name (eg. Code Italiciser)" />
+          <input id="toolUrl" placeholder="Full URL (eg. https://...)" />
+        </div>
+        <div class="form-row">
+          <input id="toolDescription" placeholder="Short description" />
+        </div>
+        <div class="form-row">
+          <input id="toolTags" placeholder="Tags (comma-separated)" />
+        </div>
+        <div class="form-row">
+          <input id="toolCategory" placeholder="Category (optional)" />
+          <input id="toolFavicon" placeholder="Favicon URL (optional) — leave blank to auto-fetch / default" />
+        </div>
+        <div class="form-row">
+          <textarea id="toolNotes" placeholder="Notes (optional)" rows="3"></textarea>
+        </div>
+        <div class="small" style="margin-top:6px;color:var(--muted)">
+          The hub stores entries in your browser by default. Use Export/Import to maintain a repo-level `tools.json`.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/*
+  Tools Hub script
+  - Stores tools in localStorage under key: "tools_hub_v1"
+  - Supports import/export JSON
+  - Preview modal with iframe (sandbox not enforced here; if you need sandboxing, add iframe sandbox attributes)
+*/
+
+/* --- Sample initial tools --- */
+const DEFAULT_TOOLS = [
+  {
+    id: cryptoRandomId(),
+    name: "Code Italiciser",
+    url: "https://jaysecotools.github.io/CodeItaliciser/",
+    description: "Adds <em>/<i> to scientific names and legislations in HTML.",
+    tags: ["html","italicise","code"],
+    category: "Text tools",
+    favicon: "https://jaysecotools.github.io/CodeItaliciser/favicon.ico",
+    notes: ""
+  },
+  {
+    id: cryptoRandomId(),
+    name: "Offline HTML tester",
+    url: "https://jaysecotools.github.io/Offline-HTML-tester/",
+    description: "Quick local HTML test harness.",
+    tags: ["html","test"],
+    category: "Dev tools",
+    favicon: "https://jaysecotools.github.io/Offline-HTML-tester/favicon.ico",
+    notes: ""
+  },
+  {
+    id: cryptoRandomId(),
+    name: "Web Code Separator",
+    url: "https://jaysecotools.github.io/WebCodeSeparator/",
+    description: "Split markup, CSS and scripts for editing.",
+    tags: ["split","code"],
+    category: "Dev tools",
+    favicon: "https://jaysecotools.github.io/WebCodeSeparator/favicon.ico",
+    notes: ""
+  }
+];
+
+/* helpers */
+function cryptoRandomId(){
+  return 'id-' + Math.random().toString(36).slice(2,9);
+}
+
+const STORAGE_KEY = 'tools_hub_v1';
+
+/* DOM */
+const grid = document.getElementById('grid');
+const q = document.getElementById('q');
+const categoryFilter = document.getElementById('categoryFilter');
+const addBtn = document.getElementById('addBtn');
+const modal = document.getElementById('modal');
+const previewFrame = document.getElementById('previewFrame');
+const modalTitle = document.getElementById('modalTitle');
+const modalUrl = document.getElementById('modalUrl');
+const closeModal = document.getElementById('closeModal');
+const openNewTab = document.getElementById('openNewTab');
+
+const formModal = document.getElementById('formModal');
+const formTitle = document.getElementById('formTitle');
+const toolName = document.getElementById('toolName');
+const toolUrl = document.getElementById('toolUrl');
+const toolDescription = document.getElementById('toolDescription');
+const toolTags = document.getElementById('toolTags');
+const toolCategory = document.getElementById('toolCategory');
+const toolFavicon = document.getElementById('toolFavicon');
+const toolNotes = document.getElementById('toolNotes');
+const saveTool = document.getElementById('saveTool');
+const cancelTool = document.getElementById('cancelTool');
+
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+
+let tools = loadTools();
+let editId = null;
+
+/* --- Boot --- */
+render();
+populateCategoryFilter();
+q.addEventListener('input', render);
+categoryFilter.addEventListener('change', render);
+addBtn.addEventListener('click', openAddForm);
+closeModal.addEventListener('click', closePreview);
+openNewTab.addEventListener('click', () => {
+  if (previewFrame.src) window.open(previewFrame.src, '_blank', 'noopener');
+});
+
+/* form handlers */
+saveTool.addEventListener('click', () => {
+  const name = toolName.value.trim();
+  const urlVal = toolUrl.value.trim();
+  if (!name || !urlVal) {
+    alert('Please provide at least a name and URL.');
+    return;
+  }
+  const obj = {
+    id: editId || cryptoRandomId(),
+    name,
+    url: urlVal,
+    description: toolDescription.value.trim(),
+    tags: toolTags.value.split(',').map(s=>s.trim()).filter(Boolean),
+    category: toolCategory.value.trim(),
+    favicon: toolFavicon.value.trim() || guessFavicon(urlVal),
+    notes: toolNotes.value.trim()
+  };
+  if (editId) {
+    tools = tools.map(t => t.id === editId ? obj : t);
+  } else {
+    tools.unshift(obj);
+  }
+  saveTools();
+  closeForm();
+  render();
+  populateCategoryFilter();
+});
+
+cancelTool.addEventListener('click', closeForm);
+
+exportBtn.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(tools, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tools.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+importBtn.addEventListener('click', async () => {
+  // Simple file input import
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,application/json';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    try {
+      const txt = await file.text();
+      const parsed = JSON.parse(txt);
+      if (!Array.isArray(parsed)) throw new Error('Invalid format: expected an array');
+      // Basic validation
+      const valid = parsed.every(p => p && p.name && p.url);
+      if (!valid) throw new Error('Missing required fields for some tools.');
+      if (!confirm('Import will replace your local hub entries. Continue?')) return;
+      tools = parsed.map(t => ({...t, id: t.id || cryptoRandomId(), favicon: t.favicon || guessFavicon(t.url)}));
+      saveTools();
+      render();
+      populateCategoryFilter();
+      alert('Import successful');
+    } catch (e) {
+      alert('Failed to import: ' + e.message);
+    }
+  };
+  input.click();
+});
+
+/* --- Functions --- */
+function loadTools(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  // No local data -> seed with defaults
+  return DEFAULT_TOOLS.slice();
+}
+
+function saveTools(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tools));
+}
+
+function render(){
+  const term = q.value.trim().toLowerCase();
+  const category = categoryFilter.value;
+  grid.innerHTML = '';
+  const filtered = tools.filter(t => {
+    if (category && (t.category || '') !== category) return false;
+    if (!term) return true;
+    const hay = (t.name + ' ' + (t.description||'') + ' ' + (t.tags||[]).join(' ') + ' ' + (t.category||'')).toLowerCase();
+    return hay.includes(term);
+  });
+  if (!filtered.length){
+    const empty = document.createElement('div');
+    empty.style.gridColumn = '1/-1';
+    empty.style.padding = '28px';
+    empty.style.textAlign = 'center';
+    empty.style.color = 'var(--muted)';
+    empty.textContent = 'No tools found — try adding one or import a `tools.json`.';
+    grid.appendChild(empty);
+    return;
+  }
+  filtered.forEach(t => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.tabIndex = 0;
+
+    const fav = document.createElement('div');
+    fav.className = 'favicon';
+    // Try to show favicon via image; fallback to initials
+    const img = document.createElement('img');
+    img.style.width='100%';
+    img.style.height='100%';
+    img.style.objectFit='cover';
+    img.alt = '';
+    img.loading = 'lazy';
+    img.onerror = () => {
+      fav.removeChild(img);
+      fav.textContent = initials(t.name);
+    };
+    img.src = t.favicon || guessFavicon(t.url);
+    fav.appendChild(img);
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const title = document.createElement('h3');
+    title.textContent = t.name;
+    const desc = document.createElement('p');
+    desc.textContent = t.description || t.url;
+    meta.appendChild(title);
+    meta.appendChild(desc);
+
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+    const preview = document.createElement('button');
+    preview.title = 'Preview';
+    preview.ariaLabel = 'Preview ' + t.name;
+    preview.innerHTML = 'Preview';
+    preview.onclick = () => openPreview(t);
+
+    const open = document.createElement('button');
+    open.title = 'Open in new tab';
+    open.innerHTML = 'Open';
+    open.onclick = () => window.open(t.url, '_blank', 'noopener');
+
+    const edit = document.createElement('button');
+    edit.title = 'Edit entry';
+    edit.innerHTML = 'Edit';
+    edit.onclick = () => openEditForm(t);
+
+    const del = document.createElement('button');
+    del.title = 'Remove from hub';
+    del.innerHTML = 'Delete';
+    del.onclick = () => {
+      if (!confirm('Delete "'+t.name+'"?')) return;
+      tools = tools.filter(x => x.id !== t.id);
+      saveTools();
+      render();
+      populateCategoryFilter();
+    };
+
+    actions.appendChild(preview);
+    actions.appendChild(open);
+    actions.appendChild(edit);
+    actions.appendChild(del);
+
+    card.appendChild(fav);
+    card.appendChild(meta);
+    card.appendChild(actions);
+
+    // Tag line
+    if (t.tags && t.tags.length) {
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.textContent = t.tags.slice(0,3).join(', ');
+      meta.appendChild(tag);
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+function initials(name){
+  return name.split(/\s+/).map(s=>s[0]).slice(0,2).join('').toUpperCase();
+}
+
+function guessFavicon(url){
+  try {
+    const u = new URL(url);
+    return u.origin + '/favicon.ico';
+  } catch(e){
+    return 'favicon.ico';
+  }
+}
+
+function openPreview(tool){
+  previewFrame.src = tool.url;
+  modalTitle.textContent = tool.name;
+  modalUrl.textContent = tool.url;
+  openNewTab.onclick = () => window.open(tool.url, '_blank', 'noopener');
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden','false');
+  previewFrame.focus();
+}
+
+function closePreview(){
+  previewFrame.src = '';
+  modal.style.display = 'none';
+  modal.setAttribute('aria-hidden','true');
+}
+
+function openAddForm(){
+  editId = null;
+  formTitle.textContent = 'Add new tool';
+  toolName.value = toolUrl.value = toolDescription.value = toolTags.value = toolCategory.value = toolFavicon.value = toolNotes.value = '';
+  formModal.style.display = 'flex';
+  formModal.setAttribute('aria-hidden','false');
+  toolName.focus();
+}
+
+function openEditForm(t){
+  editId = t.id;
+  formTitle.textContent = 'Edit tool';
+  toolName.value = t.name || '';
+  toolUrl.value = t.url || '';
+  toolDescription.value = t.description || '';
+  toolTags.value = (t.tags || []).join(', ');
+  toolCategory.value = t.category || '';
+  toolFavicon.value = t.favicon || '';
+  toolNotes.value = t.notes || '';
+  formModal.style.display = 'flex';
+  formModal.setAttribute('aria-hidden','false');
+  toolName.focus();
+}
+
+function closeForm(){
+  editId = null;
+  formModal.style.display = 'none';
+  formModal.setAttribute('aria-hidden','true');
+}
+
+function populateCategoryFilter(){
+  const cats = Array.from(new Set(tools.map(t => t.category || '').filter(Boolean))).sort();
+  categoryFilter.innerHTML = '<option value="">All categories</option>';
+  cats.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c;
+    o.textContent = c;
+    categoryFilter.appendChild(o);
+  });
+}
+
+/* Accessibility: close modals on Escape */
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape') {
+    if (modal.style.display === 'flex') closePreview();
+    if (formModal.style.display === 'flex') closeForm();
+  }
+});
+
+/* Initialise localStorage if empty (save defaults) */
+(function ensureSeeded(){
+  try {
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TOOLS));
+      tools = DEFAULT_TOOLS.slice();
+    }
+  } catch(e){}
+})();
+</script>
+</body>
+</html>
