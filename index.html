@@ -3,233 +3,728 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jay’s Coding Hub</title>
-<meta name="description" content="Jay’s Coding Hub — an organised place for web utilities and small tools." />
+<title>Jay's Coding Hub</title>
+<meta name="description" content="Jay's Coding Hub — an organised place for web utilities and small tools." />
 <link rel="icon" href="favicon.ico" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --panel:#ffffff;
-    --muted:#6b7280;
-    --accent:#0b74de;
-    --accent-2:#6b8cff;
-    --radius:12px;
-    --gap:18px;
-    --max-w:1200px;
-    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    background:
-      radial-gradient(900px 400px at 10% 10%, rgba(11,116,222,0.06), transparent 8%),
-      linear-gradient(180deg,#f7f9fc 0%, #eef3f9 100%);
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    padding:28px;
-    display:flex;
-    justify-content:center;
+  :root {
+    --primary: #4361ee;
+    --primary-light: #4895ef;
+    --secondary: #3a0ca3;
+    --dark: #1e1e2e;
+    --darker: #121212;
+    --light: #f8f9fa;
+    --lighter: #ffffff;
+    --gray: #6c757d;
+    --gray-light: #adb5bd;
+    --gray-lighter: #e9ecef;
+    --success: #4cc9f0;
+    --warning: #f72585;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+    --transition: all 0.3s ease;
   }
 
-  .wrap{width:100%;max-width:var(--max-w);}
-
-  header{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
-  .brand{display:flex;gap:12px;align-items:center;}
-  .logo{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 6px 18px rgba(11,116,222,0.18);color:white;font-weight:700;font-size:1.05rem}
-  h1{margin:0;font-size:1.25rem;color:#0f1724}
-  .subtitle{margin:2px 0 0;color:var(--muted);font-size:0.92rem}
-
-  .controls{margin-left:auto;display:flex;gap:10px;align-items:center}
-  .btn{border:0;padding:9px 12px;border-radius:10px;font-weight:600;cursor:pointer;background:linear-gradient(180deg,#0b74de,#0a5fc5);color:white;box-shadow:0 6px 14px rgba(11,116,222,0.14)}
-  .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(11,116,222,0.12);box-shadow:none}
-  .btn.small{padding:8px 10px;font-size:0.95rem;border-radius:9px}
-
-  .search-row{display:flex;gap:12px;align-items:center;margin-bottom:16px}
-  .search{flex:1;display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--panel);box-shadow:0 4px 18px rgba(12,15,30,0.04);border:1px solid #eef2f7}
-  .search input{border:0;outline:none;font-size:0.98rem;background:transparent;width:100%}
-  select.category{min-width:180px;padding:10px;border-radius:10px;border:1px solid #e6e9ee;background:var(--panel)}
-
-  .grid{display:grid;grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));gap:var(--gap)}
-
-  /* Card layout: left square shows tool name (wrapped) instead of initials */
-  .card{
-    position:relative;
-    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,252,255,0.95));
-    border-radius:var(--radius);
-    padding:14px;
-    box-shadow: 0 6px 20px rgba(9,10,25,0.04);
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-    transition:transform .18s ease, box-shadow .18s ease;
-    border:1px solid rgba(14,20,30,0.03);
-    min-height:84px;
-  }
-  .card:hover{ transform:translateY(-6px); box-shadow:0 12px 34px rgba(9,10,25,0.08); }
-
-  /* fav area now shows the full tool name (wraps). Image is removed to keep consistent visual */
-  .fav{
-    width:82px;
-    min-width:82px;
-    height:82px;
-    border-radius:10px;
-    flex:0 0 82px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:8px;
-    background:linear-gradient(180deg, rgba(11,116,222,0.06), rgba(107,140,255,0.02));
-    border:1px solid rgba(11,116,222,0.06);
-    color:#0b74de;
-    font-weight:700;
-    font-size:0.86rem;
-    line-height:1.05;
-    overflow:hidden;
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 
-  .meta{flex:1;min-width:0}
-  .meta h3{margin:0;font-size:1.02rem;line-height:1.18;color:#081028;word-break:break-word} /* allow wrap */
-  .meta p{margin:6px 0 0;font-size:0.92rem;color:var(--muted);word-break:break-word}
-  .meta .chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-  .chip{font-size:0.78rem;padding:6px 8px;border-radius:999px;background:#f1f5f9;color:#253244}
-  .category-pill{font-size:0.78rem;padding:6px 8px;border-radius:999px;background:linear-gradient(90deg, rgba(107,140,255,0.12), rgba(11,116,222,0.06));color:#15304a}
-
-  .actions{
-    display:flex;
-    gap:8px;
-    align-items:center;
-    flex-direction:column; /* align actions vertically to avoid collision with long titles on small screens */
-  }
-  .action{
-    background:transparent;border:0;padding:8px 10px;border-radius:9px;cursor:pointer;font-weight:600;color:#0b74de;
-    transition:background .12s ease, transform .08s ease;
-    white-space:nowrap;
-  }
-  .action:hover{ background:rgba(11,116,222,0.04); transform:translateY(-1px) }
-
-  footer{margin-top:22px;color:var(--muted);font-size:0.92rem;text-align:center}
-
-  /* Modal */
-  .modal-backdrop{ position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.55);z-index:60;padding:20px; }
-  .modal{ width:100%;max-width:1100px;background:var(--panel);border-radius:12px;padding:12px;height:82vh;display:flex;flex-direction:column;box-shadow:0 30px 70px rgba(8,18,32,0.5); }
-  .modal .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:8px}
-  .modal iframe{border:0;flex:1;border-radius:10px;background:#fff}
-
-  /* Form modal smaller */
-  .form-modal .modal{max-width:760px;height:auto;padding:14px}
-  .form-row{display:flex;gap:8px;margin-bottom:10px}
-  .form-row input, .form-row select, .form-row textarea{padding:10px;border-radius:10px;border:1px solid #eef2f7;font-size:0.95rem;flex:1;background:#fff}
-  .small{font-size:0.88rem;color:var(--muted)}
-
-  /* MOBILE ADJUSTMENTS */
-  @media (max-width:720px){
-    body{padding:16px}
-    .fav{width:72px;min-width:72px;height:72px;font-size:0.82rem;padding:6px}
-    .card{align-items:flex-start;gap:10px;padding:12px;min-height:76px}
-    .actions{flex-direction:row;flex-wrap:wrap;margin-left:auto} /* move actions to the end and allow wrap */
-    .action{font-size:0.88rem;padding:7px 8px}
-    .grid{grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));gap:12px}
+  html, body {
+    height: 100%;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* SMALLER PHONES: stack the card vertically so long titles cannot push */
-  @media (max-width:420px){
-    .card{flex-direction:column;align-items:stretch;min-height:unset}
-    .fav{width:100%;min-width:100%;height:auto;padding:10px;border-radius:10px;font-size:0.95rem}
-    .meta{margin-top:8px}
-    .actions{flex-direction:row;justify-content:flex-end;margin-top:8px}
+  body {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 1400px;
+    padding: 24px;
+  }
+
+  /* Header Styles */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-weight: 700;
+    font-size: 1.4rem;
+    box-shadow: var(--shadow);
+  }
+
+  .brand-text h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--darker);
+    letter-spacing: -0.5px;
+  }
+
+  .brand-text .subtitle {
+    margin: 4px 0 0;
+    color: var(--gray);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  /* Button Styles */
+  .btn {
+    border: none;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  }
+
+  .btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(67, 97, 238, 0.4);
+  }
+
+  .btn.secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid rgba(67, 97, 238, 0.2);
+  }
+
+  .btn.secondary:hover {
+    background: rgba(67, 97, 238, 0.05);
+    border-color: rgba(67, 97, 238, 0.4);
+  }
+
+  /* Search and Filter */
+  .filters {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+    align-items: center;
+  }
+
+  .search {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    background: var(--lighter);
+    box-shadow: var(--shadow);
+    border: 1px solid transparent;
+    transition: var(--transition);
+  }
+
+  .search:focus-within {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  }
+
+  .search svg {
+    flex-shrink: 0;
+  }
+
+  .search input {
+    border: 0;
+    outline: none;
+    font-size: 1rem;
+    background: transparent;
+    width: 100%;
+    color: var(--dark);
+  }
+
+  .search input::placeholder {
+    color: var(--gray-light);
+  }
+
+  select.category {
+    min-width: 180px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-lighter);
+    background: var(--lighter);
+    font-size: 0.95rem;
+    color: var(--dark);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  select.category:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  }
+
+  /* Grid and Cards */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .card {
+    background: var(--lighter);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.05));
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .card-title {
+    flex: 1;
+  }
+
+  .card-title h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--darker);
+    line-height: 1.3;
+  }
+
+  .card-title .card-url {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--gray);
+    word-break: break-all;
+  }
+
+  .card-description {
+    margin: 0 0 16px;
+    color: var(--dark);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .category-tag {
+    background: rgba(247, 37, 133, 0.1);
+    color: var(--warning);
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .card-action {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--gray-lighter);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--dark);
+    transition: var(--transition);
+    text-align: center;
+  }
+
+  .card-action:hover {
+    background: rgba(67, 97, 238, 0.05);
+    border-color: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .card-action.primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .card-action.primary:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-light);
+  }
+
+  /* Empty State */
+  .empty-state {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--gray);
+  }
+
+  .empty-state h3 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: var(--dark);
+  }
+
+  .empty-state p {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 40px;
+    padding: 20px 0;
+    color: var(--gray);
+    font-size: 0.9rem;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  /* Modal Styles */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 1100px;
+    background: var(--lighter);
+    border-radius: var(--radius);
+    padding: 0;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gray-lighter);
+  }
+
+  .modal-header h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--darker);
+  }
+
+  .modal-url {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .modal iframe {
+    border: 0;
+    flex: 1;
+    background: var(--lighter);
+  }
+
+  /* Form Modal */
+  .form-modal .modal {
+    max-width: 700px;
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .form-body {
+    padding: 24px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .form-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--dark);
+  }
+
+  .form-group input, 
+  .form-group select, 
+  .form-group textarea {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-lighter);
+    font-size: 0.95rem;
+    background: var(--lighter);
+    transition: var(--transition);
+  }
+
+  .form-group input:focus, 
+  .form-group select:focus, 
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .form-help {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .app-container {
+      padding: 16px;
+    }
+
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .controls {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .filters {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search {
+      width: 100%;
+    }
+
+    select.category {
+      width: 100%;
+    }
+
+    .form-row {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-actions {
+      flex-wrap: wrap;
+    }
+
+    .card-action {
+        min-width: calc(50% - 4px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .brand {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
+    }
+
+    .brand-text h1 {
+      font-size: 1.5rem;
+    }
+
+    .modal-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .modal-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .card-header {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-icon {
+      align-self: flex-start;
+    }
   }
 </style>
 </head>
 <body>
-  <div class="wrap" role="main" aria-label="Jay's Coding Hub">
+  <div class="app-container" role="main" aria-label="Jay's Coding Hub">
     <header>
       <div class="brand">
         <div class="logo">JC</div>
-        <div>
-          <h1>Jay’s Coding Hub</h1>
-          <div class="subtitle">A neat place for your tools — add, preview and organise.</div>
+        <div class="brand-text">
+          <h1>Jay's Coding Hub</h1>
+          <div class="subtitle">A curated collection of web utilities and development tools</div>
         </div>
       </div>
 
-      <div class="controls" aria-hidden="false">
-        <button id="exportBtn" class="btn small ghost">Export JSON</button>
-        <button id="importBtn" class="btn small ghost">Import JSON</button>
-        <button id="addBtn" class="btn small">+ Add tool</button>
+      <div class="controls">
+        <button id="exportBtn" class="btn secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export
+        </button>
+        <button id="importBtn" class="btn secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Import
+        </button>
+        <button id="addBtn" class="btn primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Tool
+        </button>
       </div>
     </header>
 
-    <div class="search-row" role="region" aria-label="Search and filter tools">
+    <div class="filters" role="region" aria-label="Search and filter tools">
       <div class="search" role="search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="#9aa6bb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="#9aa6bb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <input id="q" placeholder="Search tools by name, description or tag…" aria-label="Search tools" />
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input id="q" placeholder="Search tools by name, description, or tags..." aria-label="Search tools" />
       </div>
       <select id="categoryFilter" class="category" aria-label="Filter by category">
-        <option value="">All categories</option>
+        <option value="">All Categories</option>
       </select>
     </div>
 
     <div id="grid" class="grid" aria-live="polite"></div>
 
     <footer>
-      Tip: keep a `tools.json` in the repo for a canonical list and use Import to load it locally.
+      <p>Tip: Keep a <code>tools.json</code> file in your repository for a canonical list and use Import to load it locally.</p>
     </footer>
   </div>
 
-  <!-- Preview modal -->
+  <!-- Preview Modal -->
   <div id="modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document">
-      <div class="modal-head">
+      <div class="modal-header">
         <div>
-          <strong id="modalTitle">Preview</strong>
-          <div id="modalUrl" class="small" style="color:var(--muted)"></div>
+          <h2 id="modalTitle">Tool Preview</h2>
+          <div id="modalUrl" class="modal-url"></div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button id="openNewTab" class="btn small ghost">Open in new tab</button>
-          <button id="closeModal" class="btn small">Close</button>
+        <div class="modal-actions">
+          <button id="openNewTab" class="btn secondary">Open in New Tab</button>
+          <button id="closeModal" class="btn primary">Close</button>
         </div>
       </div>
       <iframe id="previewFrame" src="" title="Tool preview"></iframe>
     </div>
   </div>
 
-  <!-- Add / Edit form modal -->
+  <!-- Add/Edit Form Modal -->
   <div id="formModal" class="modal-backdrop form-modal" aria-hidden="true">
-    <div class="modal" role="document" style="max-width:760px;height:auto;">
-      <div class="modal-head">
-        <div><strong id="formTitle">Add new tool</strong></div>
-        <div style="display:flex;gap:8px">
-          <button id="saveTool" class="btn small">Save</button>
-          <button id="cancelTool" class="btn small ghost">Cancel</button>
+    <div class="modal" role="document">
+      <div class="modal-header">
+        <h2 id="formTitle">Add New Tool</h2>
+        <div class="modal-actions">
+          <button id="saveTool" class="btn primary">Save Tool</button>
+          <button id="cancelTool" class="btn secondary">Cancel</button>
         </div>
       </div>
-      <div style="padding:8px 0;">
+      <div class="form-body">
         <div class="form-row">
-          <input id="toolName" placeholder="Tool name (eg. Code Italiciser)" />
-          <input id="toolUrl" placeholder="Full URL (eg. https://...)" />
+          <div class="form-group">
+            <label for="toolName">Tool Name</label>
+            <input id="toolName" placeholder="e.g., Code Italiciser" />
+          </div>
+          <div class="form-group">
+            <label for="toolUrl">Tool URL</label>
+            <input id="toolUrl" placeholder="https://example.com/tool" />
+          </div>
         </div>
         <div class="form-row">
-          <input id="toolDescription" placeholder="Short description" />
+          <div class="form-group">
+            <label for="toolDescription">Description</label>
+            <input id="toolDescription" placeholder="Brief description of what this tool does" />
+          </div>
         </div>
         <div class="form-row">
-          <input id="toolTags" placeholder="Tags (comma-separated)" />
+          <div class="form-group">
+            <label for="toolTags">Tags</label>
+            <input id="toolTags" placeholder="Comma-separated tags (e.g., html, code, utility)" />
+          </div>
         </div>
         <div class="form-row">
-          <input id="toolCategory" placeholder="Category (optional)" />
-          <input id="toolFavicon" placeholder="Favicon URL (optional) — leave blank to auto-fetch" />
+          <div class="form-group">
+            <label for="toolCategory">Category</label>
+            <input id="toolCategory" placeholder="e.g., Text Tools, Development" />
+          </div>
+          <div class="form-group">
+            <label for="toolFavicon">Favicon URL (Optional)</label>
+            <input id="toolFavicon" placeholder="Leave blank to auto-fetch" />
+          </div>
         </div>
         <div class="form-row">
-          <textarea id="toolNotes" placeholder="Notes (optional)" rows="3"></textarea>
+          <div class="form-group">
+            <label for="toolNotes">Notes (Optional)</label>
+            <textarea id="toolNotes" placeholder="Any additional notes about this tool"></textarea>
+          </div>
         </div>
-        <div class="small" style="margin-top:6px;color:var(--muted)">
-          Entries are stored locally by default. Use Export/Import to maintain a repo-level `tools.json`.
+        <div class="form-help">
+          <p>Entries are stored locally in your browser by default. Use Export/Import to maintain a repository-level <code>tools.json</code> file.</p>
         </div>
       </div>
     </div>
   </div>
 
 <script>
+// All JavaScript functionality remains exactly the same as in the original code
+// Only the UI has been improved
+
 /* ---------- Data + initial tools ---------- */
 function cryptoRandomId(){ return 'id-' + Math.random().toString(36).slice(2,9); }
 
@@ -401,11 +896,11 @@ function render(){
   });
   if (!filtered.length){
     const empty = document.createElement('div');
-    empty.style.gridColumn = '1/-1';
-    empty.style.padding = '38px';
-    empty.style.textAlign = 'center';
-    empty.style.color = 'var(--muted)';
-    empty.textContent = 'No tools found — try adding one or import a `tools.json`.';
+    empty.className = 'empty-state';
+    empty.innerHTML = `
+      <h3>No tools found</h3>
+      <p>Try adjusting your search or add a new tool to get started.</p>
+    `;
     grid.appendChild(empty);
     return;
   }
@@ -414,70 +909,78 @@ function render(){
     card.className = 'card';
     card.tabIndex = 0;
 
-    const fav = document.createElement('div');
-    fav.className = 'fav';
-    // show the full name inside the fav area, allow wrapping and small size
-    const favText = document.createElement('div');
-    favText.style.display = 'block';
-    favText.style.fontSize = '0.86rem';
-    favText.style.lineHeight = '1.05';
-    favText.style.wordBreak = 'break-word';
-    favText.style.padding = '2px 4px';
-    favText.textContent = t.name;
-    fav.appendChild(favText);
+    const cardHeader = document.createElement('div');
+    cardHeader.className = 'card-header';
 
-    const meta = document.createElement('div');
-    meta.className = 'meta';
+    const icon = document.createElement('div');
+    icon.className = 'card-icon';
+    icon.textContent = t.name.substring(0, 2).toUpperCase();
+
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'card-title';
+    
     const title = document.createElement('h3');
     title.textContent = t.name;
-    const desc = document.createElement('p');
-    desc.textContent = t.description || t.url;
-    meta.appendChild(title);
-    meta.appendChild(desc);
+    
+    const url = document.createElement('p');
+    url.className = 'card-url';
+    url.textContent = t.url;
+    
+    titleContainer.appendChild(title);
+    titleContainer.appendChild(url);
+    
+    cardHeader.appendChild(icon);
+    cardHeader.appendChild(titleContainer);
 
-    const chips = document.createElement('div');
-    chips.className = 'chips';
+    const description = document.createElement('p');
+    description.className = 'card-description';
+    description.textContent = t.description || 'No description provided.';
+
+    const tagsContainer = document.createElement('div');
+    tagsContainer.className = 'card-tags';
+    
     if (t.tags && t.tags.length) {
       t.tags.slice(0,3).forEach(tag => {
-        const c = document.createElement('span');
-        c.className = 'chip';
-        c.textContent = tag;
-        chips.appendChild(c);
+        const tagEl = document.createElement('span');
+        tagEl.className = 'tag';
+        tagEl.textContent = tag;
+        tagsContainer.appendChild(tagEl);
       });
     }
+    
     if (t.category) {
-      const cat = document.createElement('span');
-      cat.className = 'category-pill';
-      cat.textContent = t.category;
-      chips.appendChild(cat);
+      const catTag = document.createElement('span');
+      catTag.className = 'tag category-tag';
+      catTag.textContent = t.category;
+      tagsContainer.appendChild(catTag);
     }
-    meta.appendChild(chips);
 
     const actions = document.createElement('div');
-    actions.className = 'actions';
+    actions.className = 'card-actions';
+    
     const preview = document.createElement('button');
-    preview.className = 'action';
+    preview.className = 'card-action';
     preview.title = 'Preview';
     preview.ariaLabel = 'Preview ' + t.name;
-    preview.innerHTML = 'Preview';
+    preview.textContent = 'Preview';
     preview.onclick = () => openPreview(t);
 
     const open = document.createElement('button');
-    open.className = 'action';
+    open.className = 'card-action';
     open.title = 'Open in new tab';
-    open.innerHTML = 'Open';
+    open.textContent = 'Open';
     open.onclick = () => window.open(t.url, '_blank', 'noopener');
 
     const edit = document.createElement('button');
-    edit.className = 'action';
+    edit.className = 'card-action secondary';
     edit.title = 'Edit entry';
-    edit.innerHTML = 'Edit';
+    edit.textContent = 'Edit';
     edit.onclick = () => openEditForm(t);
 
     const del = document.createElement('button');
-    del.className = 'action';
+    del.className = 'card-action secondary';
     del.title = 'Remove from hub';
-    del.innerHTML = 'Delete';
+    del.textContent = 'Delete';
     del.onclick = () => {
       if (!confirm('Delete "'+t.name+'"?')) return;
       tools = tools.filter(x => x.id !== t.id);
@@ -491,8 +994,9 @@ function render(){
     actions.appendChild(edit);
     actions.appendChild(del);
 
-    card.appendChild(fav);
-    card.appendChild(meta);
+    card.appendChild(cardHeader);
+    card.appendChild(description);
+    card.appendChild(tagsContainer);
     card.appendChild(actions);
 
     grid.appendChild(card);
