@@ -598,6 +598,7 @@
           <div class="subtitle">A curated collection of web utilities and development tools</div>
         </div>
       </div>
+<button id="resetBtn" class="btn secondary">Reset</button>
 
       <div class="controls">
         <button id="exportBtn" class="btn secondary">
@@ -1068,6 +1069,18 @@ function closeForm(){
   formModal.style.display = 'none';
   formModal.setAttribute('aria-hidden','true');
 }
+
+/* Reset button added to refresh page local storage */
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('Reset to default tools? This will clear your local changes.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    tools = DEFAULT_TOOLS.slice();
+    saveTools();
+    render();
+    populateCategoryFilter();
+  }
+});
+
 
 /* Accessibility: close modals on Escape */
 document.addEventListener('keydown', (ev) => {
