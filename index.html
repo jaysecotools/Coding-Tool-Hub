@@ -227,6 +227,77 @@
     box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
   }
 
+  /* Tag Filter */
+  .tag-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  .tag-filter {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+  }
+
+  .tag-filter:hover {
+    background: rgba(67, 97, 238, 0.2);
+  }
+
+  .tag-filter.active {
+    background: var(--primary);
+    color: white;
+  }
+
+  .clear-tags {
+    font-size: 0.85rem;
+    color: var(--gray);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-left: 8px;
+  }
+
+  .clear-tags:hover {
+    color: var(--primary);
+  }
+
+  /* Stats */
+  .stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: var(--lighter);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--gray);
+  }
+
   /* Grid and Cards */
   .grid {
     display: grid;
@@ -266,6 +337,17 @@
 
   .card-header {
     margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .card-favicon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    object-fit: contain;
+    flex-shrink: 0;
   }
 
   .card-title h3 {
@@ -501,6 +583,38 @@
     line-height: 1.5;
   }
 
+  /* Toast notifications */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--darker);
+    color: white;
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .toast.success {
+    background: var(--success);
+  }
+
+  .toast.error {
+    background: var(--warning);
+  }
+
   /* Responsive Design */
   @media (max-width: 1024px) {
     .grid {
@@ -548,6 +662,10 @@
 
     .card-action {
         min-width: calc(50% - 4px);
+    }
+
+    .stats {
+      justify-content: center;
     }
   }
 
@@ -599,7 +717,7 @@
         </div>
       </div>
       
-<button id="resetBtn" class="btn secondary">Reset</button>
+      <button id="resetBtn" class="btn secondary">Reset</button>
 
       <div class="controls">
         <button id="exportBtn" class="btn secondary">
@@ -628,6 +746,21 @@
       </div>
     </header>
 
+    <div class="stats" role="region" aria-label="Tool statistics">
+      <div class="stat-card">
+        <div class="stat-value" id="totalTools">0</div>
+        <div class="stat-label">Total Tools</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalCategories">0</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalTags">0</div>
+        <div class="stat-label">Tags</div>
+      </div>
+    </div>
+
     <div class="filters" role="region" aria-label="Search and filter tools">
       <div class="search" role="search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -639,6 +772,12 @@
       <select id="categoryFilter" class="category" aria-label="Filter by category">
         <option value="">All Categories</option>
       </select>
+    </div>
+
+    <div class="tag-filters" role="region" aria-label="Filter by tags">
+      <span>Filter by tags:</span>
+      <div id="tagFilters"></div>
+      <span id="clearTags" class="clear-tags" style="display: none;">Clear all</span>
     </div>
 
     <div id="grid" class="grid" aria-live="polite"></div>
@@ -701,7 +840,19 @@
         <div class="form-row">
           <div class="form-group">
             <label for="toolCategory">Category</label>
-            <input id="toolCategory" placeholder="e.g., Text Tools, Development" />
+            <select id="toolCategory">
+              <option value="">Select a category</option>
+              <option value="GIS / Mapping">GIS / Mapping</option>
+              <option value="Data Processing">Data Processing</option>
+              <option value="Export / CSV / JSON / PDF">Export / CSV / JSON / PDF</option>
+              <option value="Ecosystem Modeling">Ecosystem Modeling</option>
+              <option value="UI Components">UI Components</option>
+              <option value="Development Tools">Development Tools</option>
+              <option value="Text Tools">Text Tools</option>
+              <option value="Photography Tools">Photography Tools</option>
+              <option value="Teaching / Worksheets">Teaching / Worksheets</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="toolFavicon">Favicon URL (Optional)</label>
@@ -721,28 +872,34 @@
     </div>
   </div>
 
+  <!-- Toast notification -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <span id="toastMessage"></span>
+  </div>
+
 <script>
 /* ---------- Data + initial tools ---------- */
 function cryptoRandomId(){ return 'id-' + Math.random().toString(36).slice(2,9); }
 
+// Enhanced starter structure with categories tailored to environmental/ecosystem projects
 const DEFAULT_TOOLS = [
   {
     id: cryptoRandomId(),
     name: "Code Italiciser",
     url: "https://jaysecotools.github.io/CodeItaliciser/",
     description: "Adds <em>/<i> to scientific names and legislations in HTML.",
-    tags: ["html","italicise","code"],
-    category: "Text tools",
+    tags: ["html","italicise","code", "text-processing"],
+    category: "Text Tools",
     favicon: "",
-    notes: ""
+    notes: "Useful for academic papers with species names"
   },
   {
     id: cryptoRandomId(),
     name: "Offline HTML tester",
     url: "https://jaysecotools.github.io/Offline-HTML-tester/",
     description: "Quick local HTML test harness.",
-    tags: ["html","test"],
-    category: "Dev tools",
+    tags: ["html","test", "development"],
+    category: "Development Tools",
     favicon: "",
     notes: ""
   },
@@ -751,8 +908,8 @@ const DEFAULT_TOOLS = [
     name: "Web Code Separator",
     url: "https://jaysecotools.github.io/WebCodeSeparator/",
     description: "Split markup, CSS and scripts for editing.",
-    tags: ["split","code"],
-    category: "Dev tools",
+    tags: ["split","code", "development"],
+    category: "Development Tools",
     favicon: "",
     notes: ""
   },
@@ -761,29 +918,62 @@ const DEFAULT_TOOLS = [
     name: "Code Cleaner & Beautifier",
     url: "https://jaysecotools.github.io/CodeCleanerBeautifier/",
     description: "Clean and beautify code.",
-    tags: ["clean","code", "beautify"],
-    category: "Dev tools",
+    tags: ["clean","code", "beautify", "development"],
+    category: "Development Tools",
     favicon: "",
     notes: ""
   },
-    {
+  {
     id: cryptoRandomId(),
     name: "Coding Snippet Library",
     url: "https://jaysecotools.github.io/CodeSnippetLibraryV2/",
     description: "Search for code snippets to use in development.",
-    tags: ["snippet","code"],
-    category: "Dev tools",
+    tags: ["snippet","code", "development"],
+    category: "Development Tools",
     favicon: "",
     notes: ""
+  },
+  // Sample environmental tools
+  {
+    id: cryptoRandomId(),
+    name: "Ecosystem Simulator",
+    url: "https://example.com/ecosystem-simulator",
+    description: "Simulate population dynamics in ecological systems.",
+    tags: ["simulation", "ecology", "modeling", "data-visualization"],
+    category: "Ecosystem Modeling",
+    favicon: "",
+    notes: "Based on Lotka-Volterra equations"
+  },
+  {
+    id: cryptoRandomId(),
+    name: "CSV to GeoJSON Converter",
+    url: "https://example.com/csv-to-geojson",
+    description: "Convert CSV data with coordinates to GeoJSON format.",
+    tags: ["gis", "conversion", "data-processing", "mapping"],
+    category: "GIS / Mapping",
+    favicon: "",
+    notes: "Supports WGS84 coordinate system"
+  },
+  {
+    id: cryptoRandomId(),
+    name: "Data Export Tool",
+    url: "https://example.com/data-export",
+    description: "Export datasets to CSV, JSON, and PDF formats.",
+    tags: ["export", "csv", "json", "pdf", "data-processing"],
+    category: "Export / CSV / JSON / PDF",
+    favicon: "",
+    notes: "Includes data validation"
   }
 ];
 
-const STORAGE_KEY = 'jay_tools_hub_v3';
+const STORAGE_KEY = 'jay_tools_hub_v4';
 
 /* ---------- DOM refs ---------- */
 const grid = document.getElementById('grid');
 const q = document.getElementById('q');
 const categoryFilter = document.getElementById('categoryFilter');
+const tagFilters = document.getElementById('tagFilters');
+const clearTags = document.getElementById('clearTags');
 const addBtn = document.getElementById('addBtn');
 const modal = document.getElementById('modal');
 const previewFrame = document.getElementById('previewFrame');
@@ -807,12 +997,23 @@ const cancelTool = document.getElementById('cancelTool');
 const exportBtn = document.getElementById('exportBtn');
 const importBtn = document.getElementById('importBtn');
 
+const totalTools = document.getElementById('totalTools');
+const totalCategories = document.getElementById('totalCategories');
+const totalTags = document.getElementById('totalTags');
+
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
+
 let tools = loadTools();
 let editId = null;
+let activeTags = [];
 
 /* ---------- Boot ---------- */
 render();
 populateCategoryFilter();
+populateTagFilters();
+updateStats();
+
 q.addEventListener('input', render);
 categoryFilter.addEventListener('change', render);
 addBtn.addEventListener('click', openAddForm);
@@ -821,12 +1022,18 @@ openNewTab.addEventListener('click', () => {
   if (previewFrame.src) window.open(previewFrame.src, '_blank', 'noopener');
 });
 
+clearTags.addEventListener('click', () => {
+  activeTags = [];
+  clearTags.style.display = 'none';
+  render();
+});
+
 /* form handlers */
 saveTool.addEventListener('click', () => {
   const name = toolName.value.trim();
   const urlVal = toolUrl.value.trim();
   if (!name || !urlVal) {
-    alert('Please provide at least a name and URL.');
+    showToast('Please provide at least a name and URL.', 'error');
     return;
   }
   const obj = {
@@ -839,15 +1046,21 @@ saveTool.addEventListener('click', () => {
     favicon: toolFavicon.value.trim() || '',
     notes: toolNotes.value.trim()
   };
+  
   if (editId) {
     tools = tools.map(t => t.id === editId ? obj : t);
+    showToast('Tool updated successfully!', 'success');
   } else {
     tools.unshift(obj);
+    showToast('Tool added successfully!', 'success');
   }
+  
   saveTools();
   closeForm();
   render();
   populateCategoryFilter();
+  populateTagFilters();
+  updateStats();
 });
 
 cancelTool.addEventListener('click', closeForm);
@@ -860,6 +1073,7 @@ exportBtn.addEventListener('click', () => {
   a.download = 'tools.json';
   a.click();
   URL.revokeObjectURL(url);
+  showToast('Tools exported successfully!', 'success');
 });
 
 importBtn.addEventListener('click', async () => {
@@ -880,9 +1094,11 @@ importBtn.addEventListener('click', async () => {
       saveTools();
       render();
       populateCategoryFilter();
-      alert('Import successful');
+      populateTagFilters();
+      updateStats();
+      showToast('Tools imported successfully!', 'success');
     } catch (e) {
-      alert('Failed to import: ' + e.message);
+      showToast('Failed to import: ' + e.message, 'error');
     }
   };
   input.click();
@@ -907,10 +1123,12 @@ function render(){
   grid.innerHTML = '';
   const filtered = tools.filter(t => {
     if (category && (t.category || '') !== category) return false;
+    if (activeTags.length > 0 && !activeTags.some(tag => (t.tags || []).includes(tag))) return false;
     if (!term) return true;
     const hay = (t.name + ' ' + (t.description||'') + ' ' + (t.tags||[]).join(' ') + ' ' + (t.category||'')).toLowerCase();
     return hay.includes(term);
   });
+  
   if (!filtered.length){
     const empty = document.createElement('div');
     empty.className = 'empty-state';
@@ -921,6 +1139,7 @@ function render(){
     grid.appendChild(empty);
     return;
   }
+  
   filtered.forEach(t => {
     const card = document.createElement('article');
     card.className = 'card';
@@ -928,6 +1147,29 @@ function render(){
 
     const cardHeader = document.createElement('div');
     cardHeader.className = 'card-header';
+
+    // Try to get favicon
+    let faviconUrl = t.favicon;
+    if (!faviconUrl && t.url) {
+      try {
+        const urlObj = new URL(t.url);
+        faviconUrl = `${urlObj.origin}/favicon.ico`;
+      } catch(e) {
+        // Invalid URL, skip favicon
+      }
+    }
+
+    if (faviconUrl) {
+      const favicon = document.createElement('img');
+      favicon.className = 'card-favicon';
+      favicon.src = faviconUrl;
+      favicon.alt = '';
+      favicon.onerror = () => {
+        // If favicon fails to load, remove the element
+        favicon.remove();
+      };
+      cardHeader.appendChild(favicon);
+    }
 
     const titleContainer = document.createElement('div');
     titleContainer.className = 'card-title';
@@ -951,10 +1193,14 @@ function render(){
     tagsContainer.className = 'card-tags';
     
     if (t.tags && t.tags.length) {
-      t.tags.slice(0,3).forEach(tag => {
+      t.tags.slice(0,4).forEach(tag => {
         const tagEl = document.createElement('span');
         tagEl.className = 'tag';
         tagEl.textContent = tag;
+        tagEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleTagFilter(tag);
+        });
         tagsContainer.appendChild(tagEl);
       });
     }
@@ -998,6 +1244,9 @@ function render(){
       saveTools();
       render();
       populateCategoryFilter();
+      populateTagFilters();
+      updateStats();
+      showToast('Tool deleted successfully!', 'success');
     };
 
     actions.appendChild(preview);
@@ -1025,6 +1274,60 @@ function populateCategoryFilter(){
   });
 }
 
+function populateTagFilters(){
+  const allTags = [];
+  tools.forEach(t => {
+    if (t.tags && t.tags.length) {
+      allTags.push(...t.tags);
+    }
+  });
+  
+  const uniqueTags = Array.from(new Set(allTags)).sort();
+  tagFilters.innerHTML = '';
+  
+  uniqueTags.forEach(tag => {
+    const tagEl = document.createElement('span');
+    tagEl.className = 'tag-filter';
+    if (activeTags.includes(tag)) {
+      tagEl.classList.add('active');
+    }
+    tagEl.textContent = tag;
+    tagEl.addEventListener('click', () => toggleTagFilter(tag));
+    tagFilters.appendChild(tagEl);
+  });
+  
+  if (activeTags.length > 0) {
+    clearTags.style.display = 'inline';
+  } else {
+    clearTags.style.display = 'none';
+  }
+}
+
+function toggleTagFilter(tag) {
+  if (activeTags.includes(tag)) {
+    activeTags = activeTags.filter(t => t !== tag);
+  } else {
+    activeTags.push(tag);
+  }
+  populateTagFilters();
+  render();
+}
+
+function updateStats() {
+  const categories = new Set(tools.map(t => t.category || '').filter(Boolean));
+  const allTags = [];
+  tools.forEach(t => {
+    if (t.tags && t.tags.length) {
+      allTags.push(...t.tags);
+    }
+  });
+  const uniqueTags = new Set(allTags);
+  
+  totalTools.textContent = tools.length;
+  totalCategories.textContent = categories.size;
+  totalTags.textContent = uniqueTags.size;
+}
+
 function openPreview(tool){
   previewFrame.src = tool.url;
   modalTitle.textContent = tool.name;
@@ -1044,7 +1347,8 @@ function closePreview(){
 function openAddForm(){
   editId = null;
   formTitle.textContent = 'Add new tool';
-  toolName.value = toolUrl.value = toolDescription.value = toolTags.value = toolCategory.value = toolFavicon.value = toolNotes.value = '';
+  toolName.value = toolUrl.value = toolDescription.value = toolTags.value = toolFavicon.value = toolNotes.value = '';
+  toolCategory.value = '';
   formModal.style.display = 'flex';
   formModal.setAttribute('aria-hidden','false');
   toolName.focus();
@@ -1071,6 +1375,17 @@ function closeForm(){
   formModal.setAttribute('aria-hidden','true');
 }
 
+function showToast(message, type = 'success') {
+  toastMessage.textContent = message;
+  toast.className = 'toast';
+  toast.classList.add(type);
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
 /* Reset button added to refresh page local storage */
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (confirm('Reset to default tools? This will clear your local changes.')) {
@@ -1079,9 +1394,11 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     saveTools();
     render();
     populateCategoryFilter();
+    populateTagFilters();
+    updateStats();
+    showToast('Reset to default tools!', 'success');
   }
 });
-
 
 /* Accessibility: close modals on Escape */
 document.addEventListener('keydown', (ev) => {
